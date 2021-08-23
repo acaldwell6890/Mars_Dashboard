@@ -24,22 +24,16 @@ app.get('/apod', async(req, res) => {
         console.log('error:', err);
     }
 })
-app.get('/curiosity', async(req, res) => {
+app.get("/:rover", async(req, res) => {
     try {
-        let image = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key=${process.env.API_KEY}`)
-            .then(res => res.json())
-        res.send({ image })
+        const { rover } = req.params;
+        let roverDetails = await fetch(
+            `https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/latest_photos?api_key=${process.env.API_KEY}`
+        ).then((res) => res.json());
+        res.send({ roverDetails });
     } catch (err) {
-        console.log('error:', err);
+        console.log("error:", err);
     }
 })
-app.get('/curiosity', async(req, res) => {
-    try {
-        let image = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key=${process.env.API_KEY}`)
-            .then(res => res.json())
-        res.send({ image })
-    } catch (err) {
-        console.log('error:', err);
-    }
-})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

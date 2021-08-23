@@ -1,5 +1,5 @@
 let store = {
-    user: { name: "Student" },
+    user: { name: "Mars Dashboard" },
     apod: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
 }
@@ -12,7 +12,7 @@ const updateStore = (store, newState) => {
     render(root, store)
 }
 
-const render = async (root, state) => {
+const render = async(root, state) => {
     root.innerHTML = App(state)
 }
 
@@ -72,7 +72,7 @@ const ImageOfTheDay = (apod) => {
     console.log(photodate.getDate(), today.getDate());
 
     console.log(photodate.getDate() === today.getDate());
-    if (!apod || apod.date === today.getDate() ) {
+    if (!apod || apod.date === today.getDate()) {
         getImageOfTheDay(store)
     }
 
@@ -103,3 +103,14 @@ const getImageOfTheDay = (state) => {
 
     return data
 }
+
+const getRoverOfTheDay = (state) => {
+    let { rover } = state
+
+    fetch('http://localhost:3000/:rover')
+        .then(res => res.json())
+        .then(rover => updateStore(store, { rover }))
+    return data
+}
+
+const RoverOfTheDay = (rover)
