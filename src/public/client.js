@@ -1,5 +1,5 @@
 let store = {
-    user: { name: "Mars Dashboard" },
+    user: { name: "Explorer" },
     apod: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
 }
@@ -19,25 +19,19 @@ const render = async(root, state) => {
 
 // create content
 const App = (state) => {
-    let { rovers, apod } = state
+    let { rover, apod } = state
 
     return `
         <header></header>
         <main>
             ${Greeting(store.user.name)}
             <section>
-                <h3>Put things on the page!</h3>
-                <p>Here is an example section.</p>
+                <h3>Let's begin our journey here!</h3>
                 <p>
-                    One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
-                    the most popular websites across all federal agencies. It has the popular appeal of a Justin Bieber video.
-                    This endpoint structures the APOD imagery and associated metadata so that it can be repurposed for other
-                    applications. In addition, if the concept_tags parameter is set to True, then keywords derived from the image
-                    explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
-                    but generally help with discoverability of relevant imagery.
-                </p>
+                    You will have the opportunity to explore data and images brought to us courtesy of the three NASA rovers currently exploring the planet Mars. Click on the buttons below the daily image to see what each rover has for us today!
                 ${ImageOfTheDay(apod)}
             </section>
+            <div>Curiosity</div> <div>Opportunity</div> <div>Spirit</div>
         </main>
         <footer></footer>
     `
@@ -113,4 +107,27 @@ const getRoverOfTheDay = (state) => {
     return data
 }
 
-const RoverOfTheDay = (rover)
+const RoverOfTheDay = (rover) => {
+    const today = new Date()
+    const photoDate = new Date(apod.date)
+    console.log(photoDate.getDate(), today.getDate());
+
+    console.log(photoDate.getDate() === today.getDate());
+    if (!rover || apod.date === today.getDate()) {
+        getImageOfTheDay(store)
+    }
+
+    // check if the photo of the day is actually type video!
+    if (apod.media_type === "video") {
+        return (`
+            <p>See today's featured video <a href="${rover.url}">here</a></p>
+            <p>${rover.title}</p>
+            <p>${rover.explanation}</p>
+        `)
+    } else {
+        return (`
+            <img src="${rover.image.url}" height="350px" width="100%" />
+            <p>${rover.image.explanation}</p>
+        `)
+    }
+}
