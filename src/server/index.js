@@ -24,7 +24,7 @@ app.get('/apod', async(req, res) => {
         console.log('error:', err);
     }
 })
-app.get("/:rover", async(req, res) => {
+app.get("/rovers/:rover/photos", async(req, res) => {
     try {
         const { rover } = req.params;
         let roverDetails = await fetch(

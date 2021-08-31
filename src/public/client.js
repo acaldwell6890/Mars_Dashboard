@@ -31,7 +31,7 @@ const App = (state) => {
                     You will have the opportunity to explore data and images brought to us courtesy of the three NASA rovers currently exploring the planet Mars. Click on the buttons below the daily image to see what each rover has for us today!
                 ${ImageOfTheDay(apod)}
             </section>
-            <div>Curiosity</div> <div>Opportunity</div> <div>Spirit</div>
+        <nav class="guide"><a>Curiosity</a><a>Spirit</a><a>Opportunity</a></nav>
         </main>
         <footer></footer>
     `
@@ -101,7 +101,7 @@ const getImageOfTheDay = (state) => {
 const getRoverOfTheDay = (state) => {
     let { rover } = state
 
-    fetch('http://localhost:3000/:rover')
+    fetch('http://localhost:3000/rovers/:rover/photos')
         .then(res => res.json())
         .then(rover => updateStore(store, { rover }))
     return data
