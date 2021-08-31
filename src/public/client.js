@@ -1,133 +1,90 @@
 let store = {
-    user: { name: "Explorer" },
-    apod: '',
-    rovers: ['Curiosity', 'Opportunity', 'Spirit'],
+    user: { name: "Astronaut" },
+    rovers: Immutable.List(['Curiosity', 'Opportunity', 'Spirit']),
+    roverFactsDict: {}
 }
 
-// add our markup to the page
+const roverNames = store.rovers
 const root = document.getElementById('root')
+const roverFacts = {
+    Curiosity: "The rover's goals include an investigation of the Martian climate and geology, assessment of whether the selected field site inside Gale has ever offered environmental conditions favorable for microbial life (including investigation of the role of water), and planetary habitability studies in preparation for human exploration.",
+    Opportunity: "Mission highlights included the initial 90-sol mission, finding meteorites such as Heat Shield Rock (Meridiani Planum meteorite), and over two years of exploring and studying Victoria crater.",
+    Spirit: "The rover completed its planned 90-sol mission (around 92.5 Earth days). Aided by cleaning events that resulted in more energy generated from its solar panels, Spirit went on to function effectively over twenty times longer than NASA planners expected.",
+}
 
-const updateStore = (store, newState) => {
+roverNames.map((rover) => {
+    store.roverFactsDict[rover] = roverFacts[rover]
+})
+
+const updateStore = (roverName, roverData) => {
+    newState = {}
+    newState[roverName] = roverData
     store = Object.assign(store, newState)
     render(root, store)
 }
 
 const render = async(root, state) => {
     root.innerHTML = App(state)
+
+}
+
+function generateDivs() {
+    return `
+    <div class="container">
+        <div id='Curiosity' onclick="onClick('Curiosity')" class="card card0">
+            <div class="border">
+                <h2>Curiosity</h2>
+            </div>
+        </div>
+        <div id='Opportunity' onclick="onClick('Opportunity')" class="card card1">
+            <div class="border">
+                <h2>Opportunity</h2>
+            </div>
+        </div>
+        <div id='Spirit' onclick="onClick('Spirit')"class="card card2">
+            <div class="border">
+                <h2>Spirit</h2>
+            </div>
+        </div>
+    </div>
+    `
 }
 
 
-// create content
-const App = (state) => {
-    let { rover, apod } = state
-
+const App = () => {
     return `
-        <header></header>
         <main>
-            ${Greeting(store.user.name)}
-            <section>
-                <h3>Let's begin our journey here!</h3>
-                <p>
-                    You will have the opportunity to explore data and images brought to us courtesy of the three NASA rovers currently exploring the planet Mars. Click on the buttons below the daily image to see what each rover has for us today!
-                ${ImageOfTheDay(apod)}
-            </section>
-        <nav class="guide"><a>Curiosity</a><a>Spirit</a><a>Opportunity</a></nav>
+            ${generateDivs()}
         </main>
         <footer></footer>
     `
 }
 
-// listening for load event because page should load before any JS is called
-window.addEventListener('load', () => {
-    render(root, store)
-})
-
-// ------------------------------------------------------  COMPONENTS
-
-// Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
-const Greeting = (name) => {
-    if (name) {
-        return `
-            <h1>Welcome, ${name}!</h1>
-        `
-    }
-
-    return `
-        <h1>Hello!</h1>
+function cardStyling(roverName) {
+    document.getElementById(roverName).innerHTML = `
+    <div><h2 class="card-title" style="color: white">Rover: ${store[roverName].rover.name}</h2></div>
+    <section id:'roverInfoSection'>
+        <p style="color: white">Landing Date: ${store[roverName].rover.landing_date}</p>
+        <p style="color: white">Launch Date: ${store[roverName].rover.launch_date}</p>
+        <p style="color: white">Rover Status: ${store[roverName].rover.status}</p>
+        <p>${getRoverFact(roverName)}</p>
+    </section>
+    <div style="color: white">Latest Photo: </p><img src="${store[roverName].img_src}" alt="Latest photo captured by ${roverName} rover" width="500" height="500"/>
+    </div>
     `
 }
 
-// Example of a pure function that renders infomation requested from the backend
-const ImageOfTheDay = (apod) => {
-
-    // If image does not already exist, or it is not from today -- request it again
-    const today = new Date()
-    const photodate = new Date(apod.date)
-    console.log(photodate.getDate(), today.getDate());
-
-    console.log(photodate.getDate() === today.getDate());
-    if (!apod || apod.date === today.getDate()) {
-        getImageOfTheDay(store)
-    }
-
-    // check if the photo of the day is actually type video!
-    if (apod.media_type === "video") {
-        return (`
-            <p>See today's featured video <a href="${apod.url}">here</a></p>
-            <p>${apod.title}</p>
-            <p>${apod.explanation}</p>
-        `)
-    } else {
-        return (`
-            <img src="${apod.image.url}" height="350px" width="100%" />
-            <p>${apod.image.explanation}</p>
-        `)
-    }
+const getRoverFact = (roverName) => {
+    return store.roverFactsDict[roverName]
 }
 
-// ------------------------------------------------------  API CALLS
+function onClick(roverName) {
+    cardStyling(roverName)
+}
 
-// Example API call
-const getImageOfTheDay = (state) => {
-    let { apod } = state
-
-    fetch(`http://localhost:3000/apod`)
+roverNames.forEach((roverName) => {
+    fetch(`http://localhost:3000/rovers/${roverName}/photos`)
         .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
-
-    return data
-}
-
-const getRoverOfTheDay = (state) => {
-    let { rover } = state
-
-    fetch('http://localhost:3000/rovers/:rover/photos')
-        .then(res => res.json())
-        .then(rover => updateStore(store, { rover }))
-    return data
-}
-
-const RoverOfTheDay = (rover) => {
-    const today = new Date()
-    const photoDate = new Date(apod.date)
-    console.log(photoDate.getDate(), today.getDate());
-
-    console.log(photoDate.getDate() === today.getDate());
-    if (!rover || apod.date === today.getDate()) {
-        getImageOfTheDay(store)
-    }
-
-    // check if the photo of the day is actually type video!
-    if (apod.media_type === "video") {
-        return (`
-            <p>See today's featured video <a href="${rover.url}">here</a></p>
-            <p>${rover.title}</p>
-            <p>${rover.explanation}</p>
-        `)
-    } else {
-        return (`
-            <img src="${rover.image.url}" height="350px" width="100%" />
-            <p>${rover.image.explanation}</p>
-        `)
-    }
-}
+        .then(data =>
+            updateStore(roverName, data.roverPhotos.latest_photos[0]))
+})
