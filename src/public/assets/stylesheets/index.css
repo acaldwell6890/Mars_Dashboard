@@ -20,7 +20,7 @@ body {
     margin: 0;
     overflow: hidden;
     --color-position: 30%;
-    background: radial-gradient(circle at center, #dac152, #c79c28 var(--color-position));
+    background: radial-gradient(circle at center, #a12818, #6e4e09 var(--color-position));
     background-size: contain;
     animation: beat 3s infinite ease-in-out;
 }
